@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"strings"
 )
@@ -44,6 +45,24 @@ func (u *User) DoMessage(msg string) {
 			u.Chan <- "用户名修改成功: " + u.Name + "\n"
 		}
 		userLock.Unlock()
+
+	case strings.HasPrefix(cleanMsg, "to|"):
+		parts := strings.SplitN(cleanMsg, "|", 3)
+		if len(parts) < 3 {
+			u.Chan <- "格式错误: to|用户名|消息内容\n"
+			return
+		}
+		targetName := parts[1]
+		content := parts[2]
+		userLock.Lock()
+		targetUser, ok := onlineUsers[targetName]
+		userLock.Unlock()
+		if !ok {
+			u.Chan <- "用户不存在\n"
+			return
+		}
+		targetUser.Chan <- fmt.Sprintf("[私聊]%s: %s\n", u.Name, content)
+
 	default:
 		message <- "[" + u.Name + "]: " + cleanMsg
 	}

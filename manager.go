@@ -38,7 +38,7 @@ func handleConnection(conn net.Conn) {
 	}
 
 	userLock.Lock()
-	onlineUsers[addr] = user
+	onlineUsers[user.Name] = user //用户作为index
 	userLock.Unlock()
 
 	// 通知所有人上线消息
