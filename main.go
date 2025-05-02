@@ -16,6 +16,9 @@ func main() {
 	defer listener.Close()
 	fmt.Println("Server is listening on port 8080")
 
+	// 启动消息广播管理器
+	go Manager()
+
 	for {
 		//2. wait for a connection
 		conn, err := listener.Accept()
@@ -29,20 +32,20 @@ func main() {
 	}
 }
 
-func handleConnection(conn net.Conn) {
-	addr := conn.RemoteAddr().String()
-	fmt.Println("Client connected:", addr)
-	defer func() {
-		fmt.Println("Client disconnected:", addr)
-		conn.Close()
-	}()
+// func handleConnection(conn net.Conn) {
+// 	addr := conn.RemoteAddr().String()
+// 	fmt.Println("Client connected:", addr)
+// 	defer func() {
+// 		fmt.Println("Client disconnected:", addr)
+// 		conn.Close()
+// 	}()
 
-	buf := make([]byte, 1024)
-	for {
-		n, err := conn.Read(buf)
-		if err != nil {
-			return
-		}
-		fmt.Printf("Received information from %s client: %s ", addr, string(buf[:n]))
-	}
-}
+// 	buf := make([]byte, 1024)
+// 	for {
+// 		n, err := conn.Read(buf)
+// 		if err != nil {
+// 			return
+// 		}
+// 		fmt.Printf("Received information from %s client: %s ", addr, string(buf[:n]))
+// 	}
+// }
